@@ -49,6 +49,8 @@ type ColorPickerHTMLAttributes = Omit<
 export interface ColorPickerBaseProps<T extends AnyColor> extends ColorPickerHTMLAttributes {
   color: T;
   onChange: (newColor: T) => void;
+  onChangeComplete?: (newColor: T) => void;
+  debounceTimeout?: number;
 }
 
 type ColorInputHTMLAttributes = Omit<
@@ -59,4 +61,6 @@ type ColorInputHTMLAttributes = Omit<
 export interface ColorInputBaseProps extends ColorInputHTMLAttributes {
   color?: string;
   onChange?: (newColor: string) => void;
+  onChangeComplete?: (newColor: string) => void;
+  debounceTimeout?: number;
 }

@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { ColorModel, AnyColor, HsvaColor } from "../types";
 import { equalColorObjects } from "../utils/compare";
@@ -6,10 +7,17 @@ import { useEventCallback } from "./useEventCallback";
 export function useColorManipulation<T extends AnyColor>(
   colorModel: ColorModel<T>,
   color: T,
-  onChange?: (color: T) => void
+  onChange?: (color: T) => void,
+  onChangeComplete?: (color: T) => void,
+  debounceTimeout = 100
 ): [HsvaColor, (color: Partial<HsvaColor>) => void] {
   // Save onChange callback in the ref for avoiding "useCallback hell"
   const onChangeCallback = useEventCallback<T>(onChange);
+
+  // Debounce onChangeComplete callback
+  const onChangeCompleteCallback = useRef(
+    _.debounce((color: T) => onChangeComplete && onChangeComplete(color), debounceTimeout)
+  );
 
   // No matter which color model is used (HEX, RGB(A) or HSL(A)),
   // all internal calculations are based on HSVA model
@@ -39,6 +47,7 @@ export function useColorManipulation<T extends AnyColor>(
     ) {
       cache.current = { hsva, color: newColor };
       onChangeCallback(newColor);
+      onChangeCompleteCallback.current(newColor);
     }
   }, [hsva, colorModel, onChangeCallback]);
 

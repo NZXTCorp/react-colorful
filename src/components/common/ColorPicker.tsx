@@ -17,12 +17,20 @@ export const ColorPicker = <T extends AnyColor>({
   colorModel,
   color = colorModel.defaultColor,
   onChange,
+  onChangeComplete,
+  debounceTimeout,
   ...rest
 }: Props<T>): JSX.Element => {
   const nodeRef = useRef<HTMLDivElement>(null);
   useStyleSheet(nodeRef);
 
-  const [hsva, updateHsva] = useColorManipulation<T>(colorModel, color, onChange);
+  const [hsva, updateHsva] = useColorManipulation<T>(
+    colorModel,
+    color,
+    onChange,
+    onChangeComplete,
+    debounceTimeout
+  );
 
   const nodeClassName = formatClassName(["react-colorful", className]);
 
